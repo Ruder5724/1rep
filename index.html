@@ -256,6 +256,21 @@
             text-decoration: underline;
         }
         
+        .grade-filter {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .grade-filter input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
         @media (max-width: 600px) {
             .search-container {
                 width: 95%;
@@ -280,6 +295,10 @@
             .work-preview {
                 height: 400px;
             }
+            
+            .grade-filter {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -290,16 +309,22 @@
     
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="searchQuery" class="search-input" placeholder="Введите ключевые слова для поиска...">
+            <input type="text" id="searchQuery" class="search-input" placeholder="Введите название работы или автора...">
             <button id="searchButton" class="search-button">Поиск</button>
         </div>
         
         <div class="search-options">
             <div class="search-option active" data-type="all">Все работы</div>
-            <div class="search-option" data-type="research">Исследовательские работы</div>
-            <div class="search-option" data-type="practical">Практические работы</div>
-            <div class="search-option" data-type="8grade">Работы 8 классов</div>
-            <div class="search-option" data-type="11grade">Работы 11 классов</div>
+            <div class="search-option" data-type="research">Исследовательские</div>
+            <div class="search-option" data-type="practical">Практические</div>
+            <div class="search-option" data-type="8grade">8 класс</div>
+            <div class="search-option" data-type="11grade">11 класс</div>
+        </div>
+        
+        <div class="grade-filter">
+            <span>Фильтр по баллам:</span>
+            <input type="number" id="minGrade" placeholder="От" min="0" max="100">
+            <input type="number" id="maxGrade" placeholder="До" min="0" max="100">
         </div>
     </div>
     
@@ -345,7 +370,7 @@
                 type: "research",
                 gradeLevel: "11",
                 year: 2025,
-                grade: "96/100",
+                grade: 96,
                 supervisor: "Sergei Maltsenko",
                 content: "Исследовательская работа по экологическому воспитанию младших школьников. Разработана методика преподавания основ сортировки отходов для учащихся третьих классов.",
                 fileUrl: "https://drive.google.com/file/d/1K9VpTogdkKgXReLYTCufcWEvCzQmSZZQ/view?usp=drive_link"
@@ -357,7 +382,7 @@
                 type: "practical",
                 gradeLevel: "11",
                 year: 2025,
-                grade: "84/100",
+                grade: 84,
                 supervisor: "Igor Bitov",
                 content: "Практическая работа по изучению факторов, влияющих на качество сна подростков. Проведено анкетирование и анализ результатов.",
                 fileUrl: "https://docs.google.com/document/d/1pCIAZ_bwI8WDyPybXx8C90bYOmG0XE5R/edit?usp=sharing&ouid=109792110126916843850&rtpof=true&sd=true"
@@ -369,7 +394,7 @@
                 type: "research",
                 gradeLevel: "8",
                 year: 2024,
-                grade: "89/100",
+                grade: 89,
                 supervisor: "Кузнецова Е.Л.",
                 content: "Исследовательская работа по химии. Проведен анализ воды из различных источников школьного двора.",
                 fileUrl: "https://drive.google.com/file/d/1example1/view?usp=drive_link"
@@ -379,12 +404,24 @@
                 title: "СОЗДАНИЕ ШКОЛЬНОГО САЙТА",
                 author: "Смирнов Д., Козлова М.",
                 type: "practical",
-                gradeLevel: "11",
+                gradeLevel: "8",
                 year: 2024,
-                grade: "92/100",
+                grade: 92,
                 supervisor: "Петров А.В.",
                 content: "Практическая работа по информатике. Разработан и реализован сайт для школьного самоуправления.",
                 fileUrl: "https://drive.google.com/file/d/1example2/view?usp=drive_link"
+            },
+            {
+                id: 5,
+                title: "ИССЛЕДОВАНИЕ ВЛИЯНИЯ МУЗЫКИ НА КОНЦЕНТРАЦИЮ",
+                author: "Соколова А., Волков П.",
+                type: "research",
+                gradeLevel: "8",
+                year: 2024,
+                grade: 78,
+                supervisor: "Иванова Т.К.",
+                content: "Исследование влияния различных музыкальных жанров на концентрацию внимания школьников.",
+                fileUrl: "https://drive.google.com/file/d/1example3/view?usp=drive_link"
             }
         ];
 
@@ -393,6 +430,8 @@
         const searchButton = document.getElementById('searchButton');
         const searchResults = document.getElementById('searchResults');
         const searchOptions = document.querySelectorAll('.search-option');
+        const minGradeInput = document.getElementById('minGrade');
+        const maxGradeInput = document.getElementById('maxGrade');
         const workPage = document.getElementById('workPage');
         const workTitle = document.getElementById('workTitle');
         const workAuthor = document.getElementById('workAuthor');
@@ -410,47 +449,76 @@
 
         // Текущий выбранный тип
         let currentType = 'all';
+        let searchTimeout = null;
 
-        // Обработчики событий
-        searchButton.addEventListener('click', performSearch);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') performSearch();
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка открытия страницы работы из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const workId = urlParams.get('workId');
+            
+            if (workId) {
+                showWorkPage(parseInt(workId));
+            }
+            
+            // Настройка обработчиков событий
+            setupEventListeners();
         });
 
-        backToSearch.addEventListener('click', function(e) {
-            e.preventDefault();
-            workPage.style.display = 'none';
-            searchResults.style.display = 'block';
-        });
-
-        viewToggle.addEventListener('click', togglePreview);
-
-        // Добавляем обработчики для фильтров
-        searchOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                searchOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                currentType = this.dataset.type;
-                performSearch();
+        function setupEventListeners() {
+            // Поиск при вводе текста (с задержкой)
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
             });
-        });
+            
+            // Поиск при нажатии кнопки
+            searchButton.addEventListener('click', performSearch);
+            
+            // Поиск при нажатии Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+            
+            // Возврат к поиску
+            backToSearch.addEventListener('click', function(e) {
+                e.preventDefault();
+                workPage.style.display = 'none';
+                searchResults.style.display = 'block';
+            });
+            
+            // Переключение предпросмотра
+            viewToggle.addEventListener('click', togglePreview);
+            
+            // Фильтры по типу работы
+            searchOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    searchOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.dataset.type;
+                    performSearch();
+                });
+            });
+            
+            // Фильтры по баллам
+            minGradeInput.addEventListener('input', performSearch);
+            maxGradeInput.addEventListener('input', performSearch);
+        }
 
         // Функция поиска
         function performSearch() {
-            const query = searchInput.value.toLowerCase();
+            const query = searchInput.value.toLowerCase().trim();
+            const minGrade = parseInt(minGradeInput.value) || 0;
+            const maxGrade = parseInt(maxGradeInput.value) || 100;
             
-            if (!query.trim()) {
-                searchResults.style.display = 'none';
-                return;
-            }
-
             // Фильтрация работ
             let results = worksDatabase.filter(work => {
-                const matchesQuery = work.title.toLowerCase().includes(query) || 
-                                     work.content.toLowerCase().includes(query) ||
-                                     work.author.toLowerCase().includes(query) ||
-                                     work.supervisor.toLowerCase().includes(query);
+                // Поиск только по названию и авторам
+                const matchesQuery = query === '' || 
+                                    work.title.toLowerCase().includes(query) || 
+                                    work.author.toLowerCase().includes(query);
                 
+                // Фильтр по типу работы и классу
                 const matchesType = 
                     currentType === 'all' || 
                     (currentType === 'research' && work.type === 'research') ||
@@ -458,7 +526,10 @@
                     (currentType === '8grade' && work.gradeLevel === '8') ||
                     (currentType === '11grade' && work.gradeLevel === '11');
                 
-                return matchesQuery && matchesType;
+                // Фильтр по баллам
+                const matchesGrade = work.grade >= minGrade && work.grade <= maxGrade;
+                
+                return matchesQuery && matchesType && matchesGrade;
             });
 
             displayResults(results);
@@ -473,7 +544,7 @@
             viewToggle.textContent = 'Просмотреть онлайн';
             
             if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">По вашему запросу ничего не найдено</div>';
+                resultsContainer.innerHTML = '<div class="no-results">Работ по вашему запросу не найдено</div>';
                 return;
             }
 
@@ -482,7 +553,7 @@
                 html += `
                     <div class="result-item" data-id="${work.id}">
                         <div class="result-title">${work.title}</div>
-                        <div class="result-meta">${getTypeName(work.type)} | Класс: ${work.gradeLevel} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade} | Руководитель: ${work.supervisor}</div>
+                        <div class="result-meta">${getTypeName(work.type)} | Класс: ${work.gradeLevel} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade}/100 | Руководитель: ${work.supervisor}</div>
                         <div class="result-snippet">${getSnippet(work.content)}</div>
                     </div>
                 `;
@@ -509,7 +580,7 @@
             workType.textContent = getTypeName(work.type);
             workGradeLevel.textContent = work.gradeLevel;
             workYear.textContent = work.year;
-            workGrade.textContent = work.grade;
+            workGrade.textContent = work.grade + '/100';
             workSupervisor.textContent = work.supervisor;
             workContent.textContent = work.content;
             workDownload.href = work.fileUrl;
@@ -527,6 +598,9 @@
             viewToggle.textContent = 'Просмотреть онлайн';
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Обновляем URL без перезагрузки страницы
+            history.pushState(null, '', `?workId=${workId}`);
         }
 
         // Переключение предпросмотра
@@ -569,16 +643,6 @@
             if (text.length <= length) return text;
             return text.substring(0, length) + '...';
         }
-
-        // Обработка открытия страницы работы из URL
-        window.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const workId = urlParams.get('workId');
-            
-            if (workId) {
-                showWorkPage(parseInt(workId));
-            }
-        });
     </script>
 </body>
 </html>
