@@ -1,124 +1,158 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Post - Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьная база работ - Поиск</title>
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: 'Arial', sans-serif;
             background-color: #f5f5f5;
-            color: #333;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
         
         .header {
-            background-color: #5a3e36;
+            background-color: #2c3e50;
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .search-container {
+            margin-top: 50px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .search-options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .search-option {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-option:hover, .search-option.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #2c3e50;
             color: white;
             text-align: center;
-            padding: 40px 0;
-            margin-bottom: 30px;
+            padding: 15px 0;
+            font-size: 14px;
         }
         
-        .main-title {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        
-        .article-list {
-            margin-top: 30px;
-        }
-        
-        .article-item {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .article-item:last-child {
-            border-bottom: none;
-        }
-        
-        .article-title {
-            font-size: 1.4em;
-            margin-bottom: 10px;
-        }
-        
-        .article-title a {
-            color: #2a5885;
-            text-decoration: none;
-        }
-        
-        .article-title a:hover {
-            text-decoration: underline;
-        }
-        
-        .article-excerpt {
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-        
-        .article-meta {
-            font-size: 0.9em;
-            color: #999;
-        }
-        
-        .read-more {
-            color: #5a3e36;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        
-        .read-more:hover {
-            text-decoration: underline;
+        @media (max-width: 600px) {
+            .search-container {
+                width: 95%;
+            }
+            
+            .search-input {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+            
+            .search-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 class="main-title">POST</h1>
-        <p>Журналистское объединение учеников ТАГ</p>
+        <h1>Школьная база учебных работ</h1>
     </div>
     
-    <div class="container">
-        <div class="article-list">
-            <!-- Статья 1 -->
-            <div class="article-item">
-                <h2 class="article-title"><a href="kolobokstory.html">У бабушки и деда пропал внук</a></h2>
-                <p class="article-excerpt">Кто и когда мог украсть? Подозреваемые и материалы следствия. Только в нашем расследовании.</p>
-                <div class="article-meta">Опубликовано: 1 мая 999</div>
-                <a href="kolobokstory.html" class="read-more">Читать полностью →</a>
-            </div>
-            
-            <!-- Статья 2 -->
-            <div class="article-item">
-                <h2 class="article-title"><a href="foxcatch.html">Виновник известен! Расследование нашей казеты помогло следствию по делу Колобка</a></h2>
-                <p class="article-excerpt">Выводы и последствия для виновника.</p>
-                <div class="article-meta">Опубликовано: 10 мая 1000</div>
-                <a href="foxcatch.html" class="read-more">Читать полностью →</a>
-            </div>
-            
-            <!-- Статья 3 -->
-            <div class="article-item">
-                <h2 class="article-title"><a href="pensionery.html">Пенсионер украл пенсию своего друга</a></h2>
-                <p class="article-excerpt">Пенсионер по имени Данил Коробов украл пенсию у Михаила Антошкина. Читать подробнее и смотреть видио драки скалками тут. Влияет ли на это повышение стоимости автоналога?</p>
-                <div class="article-meta">Опубликовано: 9 мая 2077</div>
-                <a href="pensionery.html" class="read-more">Читать полностью →</a>
-            </div>
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Введите ключевые слова для поиска...">
+            <button class="search-button">Поиск</button>
         </div>
+        
+        <div class="search-options">
+            <div class="search-option active">Все работы</div>
+            <div class="search-option">Исследования</div>
+            <div class="search-option">Рефераты</div>
+            <div class="search-option">Проекты</div>
+            <div class="search-option">Презентации</div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        © 2023 Школьная база учебных работ. Все права защищены.
     </div>
 </body>
 </html>
