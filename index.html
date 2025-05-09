@@ -5,129 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Школьная база работ - Поиск</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        /* Все предыдущие стили остаются */
         
-        body {
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .header {
-            background-color: #2c3e50;
-            color: white;
-            width: 100%;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        
-        .search-container {
-            margin-top: 50px;
+        .work-page {
             width: 80%;
             max-width: 800px;
-            text-align: center;
+            margin: 30px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            display: none;
         }
         
-        .search-box {
-            position: relative;
-            width: 100%;
+        .work-title {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
         
-        .search-input {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 18px;
-            border: 2px solid #ddd;
-            border-radius: 30px;
-            outline: none;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .work-meta {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
         }
         
-        .search-input:focus {
-            border-color: #3498db;
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        .work-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
         }
         
-        .search-button {
-            position: absolute;
-            right: 5px;
-            top: 5px;
+        .work-download {
+            display: inline-block;
             background-color: #3498db;
             color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 10px 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
         }
         
-        .search-button:hover {
+        .work-download:hover {
             background-color: #2980b9;
         }
         
-        .search-options {
+        .back-to-search {
+            display: inline-block;
             margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .search-option {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .search-option:hover, .search-option.active {
-            background-color: #3498db;
-            color: white;
-            border-color: #3498db;
-        }
-        
-        .footer {
-            margin-top: auto;
-            width: 100%;
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
+            color: #3498db;
+            text-decoration: none;
             font-size: 14px;
         }
         
-        @media (max-width: 600px) {
-            .search-container {
-                width: 95%;
-            }
-            
-            .search-input {
-                font-size: 16px;
-                padding: 12px 15px;
-            }
-            
-            .search-button {
-                padding: 8px 15px;
-                font-size: 14px;
-            }
+        .back-to-search:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -138,21 +72,213 @@
     
     <div class="search-container">
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Введите ключевые слова для поиска...">
-            <button class="search-button">Поиск</button>
+            <input type="text" id="searchQuery" class="search-input" placeholder="Введите ключевые слова для поиска...">
+            <button id="searchButton" class="search-button">Поиск</button>
         </div>
         
         <div class="search-options">
-            <div class="search-option active">Все работы</div>
-            <div class="search-option">Исследования</div>
-            <div class="search-option">Рефераты</div>
-            <div class="search-option">Проекты</div>
-            <div class="search-option">Презентации</div>
+            <div class="search-option active" data-type="all">Все работы</div>
+            <div class="search-option" data-type="research">Исследования</div>
+            <div class="search-option" data-type="essay">Рефераты</div>
+            <div class="search-option" data-type="project">Проекты</div>
+            <div class="search-option" data-type="presentation">Презентации</div>
         </div>
+    </div>
+    
+    <div id="searchResults" class="search-results" style="display: none;">
+        <!-- Здесь будут появляться результаты поиска -->
+    </div>
+    
+    <div id="workPage" class="work-page">
+        <h2 class="work-title" id="workTitle">Название работы</h2>
+        <div class="work-meta">
+            Автор: <span id="workAuthor"></span> | 
+            Тип: <span id="workType"></span> | 
+            Год: <span id="workYear"></span>
+        </div>
+        <div class="work-content" id="workContent">
+            Описание работы...
+        </div>
+        <a href="#" class="work-download" id="workDownload" target="_blank">Скачать работу</a>
+        <br>
+        <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
     </div>
     
     <div class="footer">
         © 2023 Школьная база учебных работ. Все права защищены.
     </div>
+
+    <script>
+        // Пример данных с ссылками на Google Drive
+        const worksDatabase = [
+            {
+                id: 1,
+                title: "Исследование экологии школьного двора",
+                author: "Иванов А.",
+                type: "research",
+                year: 2023,
+                content: "В данной работе проведено исследование экологического состояния школьного двора. Были изучены виды растений, наличие мусора и предложены меры по улучшению экологии.",
+                fileUrl: "https://drive.google.com/file/d/1K9VpTogdkKgXReLYTCufcWEvCzQmSZZQ/view?usp=drive_link"
+            },
+            {
+                id: 2,
+                title: "Реферат по истории Древнего Рима",
+                author: "Петрова М.",
+                type: "essay",
+                year: 2022,
+                content: "Реферат охватывает основные периоды истории Древнего Рима от основания города до падения Западной Римской империи. Особое внимание уделено системе управления и культурным достижениям.",
+                fileUrl: "https://drive.google.com/file/d/1example2/view?usp=drive_link"
+            },
+            {
+                id: 3,
+                title: "Проект 'Умная теплица'",
+                author: "Сидоров В.",
+                type: "project",
+                year: 2023,
+                content: "Проект представляет собой автоматизированную теплицу с датчиками температуры и влажности. Система автоматически регулирует условия для оптимального роста растений.",
+                fileUrl: "https://drive.google.com/file/d/1example3/view?usp=drive_link"
+            }
+        ];
+
+        // Элементы DOM
+        const searchInput = document.getElementById('searchQuery');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const searchOptions = document.querySelectorAll('.search-option');
+        const workPage = document.getElementById('workPage');
+        const workTitle = document.getElementById('workTitle');
+        const workAuthor = document.getElementById('workAuthor');
+        const workType = document.getElementById('workType');
+        const workYear = document.getElementById('workYear');
+        const workContent = document.getElementById('workContent');
+        const workDownload = document.getElementById('workDownload');
+        const backToSearch = document.getElementById('backToSearch');
+
+        // Текущий выбранный тип
+        let currentType = 'all';
+
+        // Обработчики событий
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        backToSearch.addEventListener('click', function(e) {
+            e.preventDefault();
+            workPage.style.display = 'none';
+            searchResults.style.display = 'block';
+        });
+
+        // Добавляем обработчики для фильтров
+        searchOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                searchOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                currentType = this.dataset.type;
+                performSearch();
+            });
+        });
+
+        // Функция поиска
+        function performSearch() {
+            const query = searchInput.value.toLowerCase();
+            
+            if (!query.trim()) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            // Фильтрация работ
+            let results = worksDatabase.filter(work => {
+                const matchesQuery = work.title.toLowerCase().includes(query) || 
+                                     work.content.toLowerCase().includes(query) ||
+                                     work.author.toLowerCase().includes(query);
+                
+                const matchesType = currentType === 'all' || work.type === currentType;
+                
+                return matchesQuery && matchesType;
+            });
+
+            displayResults(results);
+        }
+
+        // Отображение результатов
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.style.display = 'block';
+            workPage.style.display = 'none';
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div class="no-results">По вашему запросу ничего не найдено</div>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(work => {
+                html += `
+                    <div class="result-item" data-id="${work.id}">
+                        <div class="result-title">${work.title}</div>
+                        <div class="result-meta">${getTypeName(work.type)} | Автор: ${work.author} | Год: ${work.year}</div>
+                        <div class="result-snippet">${getSnippet(work.content)}</div>
+                    </div>
+                `;
+            });
+
+            resultsContainer.innerHTML = html;
+            
+            // Добавляем обработчики для клика на результат
+            document.querySelectorAll('.result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const workId = parseInt(this.dataset.id);
+                    showWorkPage(workId);
+                });
+            });
+        }
+
+        // Показать страницу работы
+        function showWorkPage(workId) {
+            const work = worksDatabase.find(w => w.id === workId);
+            if (!work) return;
+            
+            workTitle.textContent = work.title;
+            workAuthor.textContent = work.author;
+            workType.textContent = getTypeName(work.type);
+            workYear.textContent = work.year;
+            workContent.textContent = work.content;
+            workDownload.href = work.fileUrl;
+            
+            searchResults.style.display = 'none';
+            workPage.style.display = 'block';
+            
+            // Прокрутка вверх
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Вспомогательные функции
+        function getTypeName(type) {
+            const types = {
+                'research': 'Исследование',
+                'essay': 'Реферат',
+                'project': 'Проект',
+                'presentation': 'Презентация'
+            };
+            return types[type] || 'Работа';
+        }
+
+        function getSnippet(text, length = 150) {
+            if (text.length <= length) return text;
+            return text.substring(0, length) + '...';
+        }
+
+        // Обработка открытия страницы работы из URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const workId = urlParams.get('workId');
+            
+            if (workId) {
+                showWorkPage(parseInt(workId));
+            }
+        });
+    </script>
 </body>
 </html>
