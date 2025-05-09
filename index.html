@@ -229,6 +229,33 @@
             font-size: 14px;
         }
         
+        .work-preview {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .work-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .view-toggle {
+            display: inline-block;
+            margin-left: 10px;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .view-toggle:hover {
+            text-decoration: underline;
+        }
+        
         @media (max-width: 600px) {
             .search-container {
                 width: 95%;
@@ -249,6 +276,10 @@
                 margin-right: 0;
                 margin-bottom: 5px;
             }
+            
+            .work-preview {
+                height: 400px;
+            }
         }
     </style>
 </head>
@@ -265,10 +296,10 @@
         
         <div class="search-options">
             <div class="search-option active" data-type="all">Все работы</div>
-            <div class="search-option" data-type="research">Исследования</div>
-            <div class="search-option" data-type="essay">Рефераты</div>
-            <div class="search-option" data-type="project">Проекты</div>
-            <div class="search-option" data-type="presentation">Презентации</div>
+            <div class="search-option" data-type="research">Исследовательские работы</div>
+            <div class="search-option" data-type="practical">Практические работы</div>
+            <div class="search-option" data-type="8grade">Работы 8 классов</div>
+            <div class="search-option" data-type="11grade">Работы 11 классов</div>
         </div>
     </div>
     
@@ -281,14 +312,21 @@
         <div class="work-meta">
             <span>Автор: <span id="workAuthor"></span></span>
             <span>Тип: <span id="workType"></span></span>
+            <span>Класс: <span id="workGradeLevel"></span></span>
             <span>Год: <span id="workYear"></span></span>
             <span class="work-grade">Баллы: <span id="workGrade"></span></span>
             <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
         </div>
+        
+        <div class="work-preview" id="workPreview" style="display: none;">
+            <iframe id="workFrame" src="" allowfullscreen></iframe>
+        </div>
+        
         <div class="work-content" id="workContent">
             Описание работы...
         </div>
         <a href="#" class="work-download" id="workDownload" target="_blank">Скачать работу</a>
+        <span class="view-toggle" id="viewToggle">Просмотреть онлайн</span>
         <br>
         <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
     </div>
@@ -298,39 +336,55 @@
     </div>
 
     <script>
-        // Пример данных с ссылками на Google Drive
+        // Обновленные данные работ
         const worksDatabase = [
             {
                 id: 1,
                 title: "ПРАВИЛА СОРТИРОВКИ ОТХОДОВ В ЭСТОНИИ НА УРОКАХ ДЛЯ ТРЕТЬИХ КЛАССОВ ТАГ",
                 author: "Antoskin Mihhail, Daniel Kozorev",
                 type: "research",
+                gradeLevel: "11",
                 year: 2025,
                 grade: "96/100",
                 supervisor: "Sergei Maltsenko",
+                content: "Исследовательская работа по экологическому воспитанию младших школьников. Разработана методика преподавания основ сортировки отходов для учащихся третьих классов.",
                 fileUrl: "https://drive.google.com/file/d/1K9VpTogdkKgXReLYTCufcWEvCzQmSZZQ/view?usp=drive_link"
             },
             {
                 id: 2,
                 title: "ПРИЧИНЫ НЕКАЧЕСТВЕННОГО СНА У ПОДРОСТКОВ",
                 author: "Stanislav Ariskin, Rakitin Egor",
-                type: "essay",
+                type: "practical",
+                gradeLevel: "11",
                 year: 2025,
                 grade: "84/100",
                 supervisor: "Igor Bitov",
-                content: "Реферат охватывает основные периоды истории Древнего Рима от основания города до падения Западной Римской империи. Особое внимание уделено системе управления и культурным достижениям.",
+                content: "Практическая работа по изучению факторов, влияющих на качество сна подростков. Проведено анкетирование и анализ результатов.",
                 fileUrl: "https://docs.google.com/document/d/1pCIAZ_bwI8WDyPybXx8C90bYOmG0XE5R/edit?usp=sharing&ouid=109792110126916843850&rtpof=true&sd=true"
             },
             {
                 id: 3,
-                title: "Проект 'Умная теплица'",
-                author: "Сидоров В.",
-                type: "project",
-                year: 2023,
-                grade: "92/100",
+                title: "АНАЛИЗ КАЧЕСТВА ВОДЫ В ШКОЛЬНЫХ ИСТОЧНИКАХ",
+                author: "Иванова А., Петров С.",
+                type: "research",
+                gradeLevel: "8",
+                year: 2024,
+                grade: "89/100",
                 supervisor: "Кузнецова Е.Л.",
-                content: "Проект представляет собой автоматизированную теплицу с датчиками температуры и влажности. Система автоматически регулирует условия для оптимального роста растений.",
-                fileUrl: "https://drive.google.com/file/d/1example3/view?usp=drive_link"
+                content: "Исследовательская работа по химии. Проведен анализ воды из различных источников школьного двора.",
+                fileUrl: "https://drive.google.com/file/d/1example1/view?usp=drive_link"
+            },
+            {
+                id: 4,
+                title: "СОЗДАНИЕ ШКОЛЬНОГО САЙТА",
+                author: "Смирнов Д., Козлова М.",
+                type: "practical",
+                gradeLevel: "11",
+                year: 2024,
+                grade: "92/100",
+                supervisor: "Петров А.В.",
+                content: "Практическая работа по информатике. Разработан и реализован сайт для школьного самоуправления.",
+                fileUrl: "https://drive.google.com/file/d/1example2/view?usp=drive_link"
             }
         ];
 
@@ -343,12 +397,16 @@
         const workTitle = document.getElementById('workTitle');
         const workAuthor = document.getElementById('workAuthor');
         const workType = document.getElementById('workType');
+        const workGradeLevel = document.getElementById('workGradeLevel');
         const workYear = document.getElementById('workYear');
         const workGrade = document.getElementById('workGrade');
         const workSupervisor = document.getElementById('workSupervisor');
         const workContent = document.getElementById('workContent');
         const workDownload = document.getElementById('workDownload');
         const backToSearch = document.getElementById('backToSearch');
+        const workPreview = document.getElementById('workPreview');
+        const workFrame = document.getElementById('workFrame');
+        const viewToggle = document.getElementById('viewToggle');
 
         // Текущий выбранный тип
         let currentType = 'all';
@@ -364,6 +422,8 @@
             workPage.style.display = 'none';
             searchResults.style.display = 'block';
         });
+
+        viewToggle.addEventListener('click', togglePreview);
 
         // Добавляем обработчики для фильтров
         searchOptions.forEach(option => {
@@ -391,7 +451,12 @@
                                      work.author.toLowerCase().includes(query) ||
                                      work.supervisor.toLowerCase().includes(query);
                 
-                const matchesType = currentType === 'all' || work.type === currentType;
+                const matchesType = 
+                    currentType === 'all' || 
+                    (currentType === 'research' && work.type === 'research') ||
+                    (currentType === 'practical' && work.type === 'practical') ||
+                    (currentType === '8grade' && work.gradeLevel === '8') ||
+                    (currentType === '11grade' && work.gradeLevel === '11');
                 
                 return matchesQuery && matchesType;
             });
@@ -404,6 +469,8 @@
             const resultsContainer = document.getElementById('searchResults');
             resultsContainer.style.display = 'block';
             workPage.style.display = 'none';
+            workPreview.style.display = 'none';
+            viewToggle.textContent = 'Просмотреть онлайн';
             
             if (results.length === 0) {
                 resultsContainer.innerHTML = '<div class="no-results">По вашему запросу ничего не найдено</div>';
@@ -415,7 +482,7 @@
                 html += `
                     <div class="result-item" data-id="${work.id}">
                         <div class="result-title">${work.title}</div>
-                        <div class="result-meta">${getTypeName(work.type)} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade} | Руководитель: ${work.supervisor}</div>
+                        <div class="result-meta">${getTypeName(work.type)} | Класс: ${work.gradeLevel} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade} | Руководитель: ${work.supervisor}</div>
                         <div class="result-snippet">${getSnippet(work.content)}</div>
                     </div>
                 `;
@@ -440,31 +507,65 @@
             workTitle.textContent = work.title;
             workAuthor.textContent = work.author;
             workType.textContent = getTypeName(work.type);
+            workGradeLevel.textContent = work.gradeLevel;
             workYear.textContent = work.year;
             workGrade.textContent = work.grade;
             workSupervisor.textContent = work.supervisor;
             workContent.textContent = work.content;
             workDownload.href = work.fileUrl;
             
+            // Настройка предпросмотра
+            const fileId = extractFileId(work.fileUrl);
+            if (fileId) {
+                const previewUrl = `https://docs.google.com/viewer?embedded=true&url=https://drive.google.com/uc?id=${fileId}`;
+                workFrame.src = previewUrl;
+            }
+            
             searchResults.style.display = 'none';
             workPage.style.display = 'block';
+            workPreview.style.display = 'none';
+            viewToggle.textContent = 'Просмотреть онлайн';
             
-            // Прокрутка вверх
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Переключение предпросмотра
+        function togglePreview() {
+            if (workPreview.style.display === 'none') {
+                workPreview.style.display = 'block';
+                this.textContent = 'Скрыть просмотр';
+            } else {
+                workPreview.style.display = 'none';
+                this.textContent = 'Просмотреть онлайн';
+            }
+        }
+
+        // Извлечение ID файла из ссылки Google Drive
+        function extractFileId(url) {
+            if (!url) return null;
+            
+            // Для обычных ссылок на файлы
+            const fileMatch = url.match(/\/file\/d\/([^\/]+)/);
+            if (fileMatch) return fileMatch[1];
+            
+            // Для ссылок на документы Google
+            const docMatch = url.match(/\/document\/d\/([^\/]+)/);
+            if (docMatch) return docMatch[1];
+            
+            return null;
         }
 
         // Вспомогательные функции
         function getTypeName(type) {
             const types = {
-                'research': 'Исследование',
-                'essay': 'Реферат',
-                'project': 'Проект',
-                'presentation': 'Презентация'
+                'research': 'Исследовательская работа',
+                'practical': 'Практическая работа'
             };
             return types[type] || 'Работа';
         }
 
         function getSnippet(text, length = 150) {
+            if (!text) return 'Описание отсутствует';
             if (text.length <= length) return text;
             return text.substring(0, length) + '...';
         }
