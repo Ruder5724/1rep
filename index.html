@@ -5,7 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Школьная база работ - Поиск</title>
     <style>
-        /* Все предыдущие стили остаются */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .search-container {
+            margin-top: 50px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .search-options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .search-option {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-option:hover, .search-option.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .search-results {
+            width: 80%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-title {
+            color: #3498db;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .result-meta {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+        
+        .result-snippet {
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
         
         .work-page {
             width: 80%;
@@ -30,6 +171,20 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
+        }
+        
+        .work-meta span {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        
+        .work-grade {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .work-supervisor {
+            font-style: italic;
         }
         
         .work-content {
@@ -63,6 +218,38 @@
         .back-to-search:hover {
             text-decoration: underline;
         }
+        
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .search-container {
+                width: 95%;
+            }
+            
+            .search-input {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+            
+            .search-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .work-meta span {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -92,9 +279,11 @@
     <div id="workPage" class="work-page">
         <h2 class="work-title" id="workTitle">Название работы</h2>
         <div class="work-meta">
-            Автор: <span id="workAuthor"></span> | 
-            Тип: <span id="workType"></span> | 
-            Год: <span id="workYear"></span>
+            <span>Автор: <span id="workAuthor"></span></span>
+            <span>Тип: <span id="workType"></span></span>
+            <span>Год: <span id="workYear"></span></span>
+            <span class="work-grade">Баллы: <span id="workGrade"></span></span>
+            <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
         </div>
         <div class="work-content" id="workContent">
             Описание работы...
@@ -113,10 +302,12 @@
         const worksDatabase = [
             {
                 id: 1,
-                title: "Исследование экологии школьного двора",
-                author: "Иванов А.",
+                title: "ПРАВИЛА СОРТИРОВКИ ОТХОДОВ В ЭСТОНИИ НА УРОКАХ ДЛЯ ТРЕТЬИХ КЛАССОВ ТАГ",
+                author: "Antoskin Mihhail, Daniel Kozorev",
                 type: "research",
-                year: 2023,
+                year: 2025,
+                grade: "95/100",
+                supervisor: "Иванова М.П.",
                 content: "В данной работе проведено исследование экологического состояния школьного двора. Были изучены виды растений, наличие мусора и предложены меры по улучшению экологии.",
                 fileUrl: "https://drive.google.com/file/d/1K9VpTogdkKgXReLYTCufcWEvCzQmSZZQ/view?usp=drive_link"
             },
@@ -126,6 +317,8 @@
                 author: "Петрова М.",
                 type: "essay",
                 year: 2022,
+                grade: "88/100",
+                supervisor: "Смирнов А.В.",
                 content: "Реферат охватывает основные периоды истории Древнего Рима от основания города до падения Западной Римской империи. Особое внимание уделено системе управления и культурным достижениям.",
                 fileUrl: "https://drive.google.com/file/d/1example2/view?usp=drive_link"
             },
@@ -135,6 +328,8 @@
                 author: "Сидоров В.",
                 type: "project",
                 year: 2023,
+                grade: "92/100",
+                supervisor: "Кузнецова Е.Л.",
                 content: "Проект представляет собой автоматизированную теплицу с датчиками температуры и влажности. Система автоматически регулирует условия для оптимального роста растений.",
                 fileUrl: "https://drive.google.com/file/d/1example3/view?usp=drive_link"
             }
@@ -150,6 +345,8 @@
         const workAuthor = document.getElementById('workAuthor');
         const workType = document.getElementById('workType');
         const workYear = document.getElementById('workYear');
+        const workGrade = document.getElementById('workGrade');
+        const workSupervisor = document.getElementById('workSupervisor');
         const workContent = document.getElementById('workContent');
         const workDownload = document.getElementById('workDownload');
         const backToSearch = document.getElementById('backToSearch');
@@ -192,7 +389,8 @@
             let results = worksDatabase.filter(work => {
                 const matchesQuery = work.title.toLowerCase().includes(query) || 
                                      work.content.toLowerCase().includes(query) ||
-                                     work.author.toLowerCase().includes(query);
+                                     work.author.toLowerCase().includes(query) ||
+                                     work.supervisor.toLowerCase().includes(query);
                 
                 const matchesType = currentType === 'all' || work.type === currentType;
                 
@@ -218,7 +416,7 @@
                 html += `
                     <div class="result-item" data-id="${work.id}">
                         <div class="result-title">${work.title}</div>
-                        <div class="result-meta">${getTypeName(work.type)} | Автор: ${work.author} | Год: ${work.year}</div>
+                        <div class="result-meta">${getTypeName(work.type)} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade} | Руководитель: ${work.supervisor}</div>
                         <div class="result-snippet">${getSnippet(work.content)}</div>
                     </div>
                 `;
@@ -244,6 +442,8 @@
             workAuthor.textContent = work.author;
             workType.textContent = getTypeName(work.type);
             workYear.textContent = work.year;
+            workGrade.textContent = work.grade;
+            workSupervisor.textContent = work.supervisor;
             workContent.textContent = work.content;
             workDownload.href = work.fileUrl;
             
