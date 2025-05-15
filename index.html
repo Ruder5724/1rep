@@ -75,6 +75,24 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+        .top-left-button {
+            position: absolute;        /* Размещаем элемент поверх других */
+            top: 20px;                 /* Отступ сверху от края страницы */
+            left: 20px;                /* Отступ слева от края страницы */
+            background-color: #3498db; /* Цвет кнопки — такой же, как у кнопки "Поиск" */
+            color: white;              /* Цвет текста */
+            border: none;              /* Убираем стандартную рамку */
+            border-radius: 25px;       /* Скругление углов */
+            padding: 10px 25px;        /* Отступы внутри кнопки */
+            font-size: 16px;           /* Размер текста */
+            cursor: pointer;           /* Курсор при наведении */
+            z-index: 1000;             /* Убедимся, что кнопка будет поверх всех */
+            transition: background-color 0.3s; /* Плавный переход цвета при наведении */
+        }
+
+        .top-left-button:hover {
+            background-color: #2980b9; /* Цвет при наведении */
+        }
         
         .search-button:hover {
             background-color: #2980b9;
@@ -303,6 +321,7 @@
     </style>
 </head>
 <body>
+    <button class="top-left-button">Меню</button>
     <div class="header">
         <h1>Школьная база учебных работ TAG</h1>
     </div>
