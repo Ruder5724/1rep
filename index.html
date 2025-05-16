@@ -1,72 +1,364 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Школьная база работ TAG - Поиск</title>
-    <style>
-        /* Сюда вставляется всё содержимое <style> — CSS-код */
-        ...
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Школьная база работ TAG - Поиск</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .header {
+      background-color: #2c3e50;
+      color: white;
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .top-left-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background-color 0.3s;
+    }
+
+    .top-left-button:hover {
+      background-color: #2980b9;
+    }
+
+    .search-container {
+      margin-top: 50px;
+      width: 80%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 18px;
+      border: 2px solid #ddd;
+      border-radius: 30px;
+      outline: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-input:focus {
+      border-color: #3498db;
+      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .search-button {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-button:hover {
+      background-color: #2980b9;
+    }
+
+    .search-options {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .search-option {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-option:hover,
+    .search-option.active {
+      background-color: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+
+    .grade-filter {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .grade-filter input {
+      width: 60px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .search-results,
+    .work-page {
+      width: 80%;
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: none;
+    }
+
+    .result-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .result-title {
+      color: #3498db;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .result-meta {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .result-snippet {
+      font-size: 15px;
+      color: #333;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+    }
+
+    .work-title {
+      color: #2c3e50;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .work-meta {
+      font-size: 16px;
+      color: #7f8c8d;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+    }
+
+    .work-meta span {
+      display: inline-block;
+      margin-right: 15px;
+    }
+
+    .work-grade {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .work-supervisor {
+      font-style: italic;
+    }
+
+    .work-content {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .work-download {
+      display: inline-block;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .work-download:hover {
+      background-color: #2980b9;
+    }
+
+    .view-toggle {
+      display: inline-block;
+      margin-left: 10px;
+      color: #3498db;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .view-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .work-preview {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .work-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .back-to-search {
+      display: inline-block;
+      margin-top: 20px;
+      color: #3498db;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-to-search:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: auto;
+      width: 100%;
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .search-container {
+        width: 95%;
+      }
+
+      .search-input {
+        font-size: 16px;
+        padding: 12px 15px;
+      }
+
+      .search-button {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+
+      .work-meta span {
+        display: block;
+        margin-right: 0;
+        margin-bottom: 5px;
+      }
+
+      .work-preview {
+        height: 400px;
+      }
+
+      .grade-filter {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-    <button class="top-left-button">Меню</button>
-    <div class="header">
-        <h1>Школьная база учебных работ TAG</h1>
-    </div>
-    
-    <div class="search-container">
-        <div class="search-box">
-            <input type="text" id="searchQuery" class="search-input" placeholder="Введите название работы или автора...">
-            <button id="searchButton" class="search-button">Поиск</button>
-        </div>
-        
-        <div class="search-options">
-            <div class="search-option active" data-type="all">Все работы</div>
-            <div class="search-option" data-type="research">Исследовательские</div>
-            <div class="search-option" data-type="practical">Практические</div>
-            <div class="search-option" data-type="8grade">8 класс</div>
-            <div class="search-option" data-type="11grade">11 класс</div>
-        </div>
-        
-        <div class="grade-filter">
-            <span>Фильтр по баллам:</span>
-            <input type="number" id="minGrade" placeholder="От" min="0" max="100">
-            <input type="number" id="maxGrade" placeholder="До" min="0" max="100">
-        </div>
-    </div>
-    
-    <div id="searchResults" class="search-results" style="display: none;">
-        <!-- Здесь будут появляться результаты поиска -->
-    </div>
-    
-    <div id="workPage" class="work-page">
-        <h2 class="work-title" id="workTitle">Название работы</h2>
-        <div class="work-meta">
-            <span>Автор: <span id="workAuthor"></span></span>
-            <span>Тип: <span id="workType"></span></span>
-            <span>Класс: <span id="workGradeLevel"></span></span>
-            <span>Год: <span id="workYear"></span></span>
-            <span class="work-grade">Баллы: <span id="workGrade"></span></span>
-            <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
-        </div>
-        
-        <div class="work-preview" id="workPreview" style="display: none;">
-            <iframe id="workFrame" src="" allowfullscreen></iframe>
-        </div>
-        
-        <div class="work-content" id="workContent">Описание работы...</div>
-        <a href="#" class="work-download" id="workDownload" target="_blank">Open work</a>
-        <span class="view-toggle" id="viewToggle">Просмотреть онлайн</span>
-        <br>
-        <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
-    </div>
-    
-    <div class="footer">
-        © 2025 Tartu Annelinna Gumnaasium
+  <button class="top-left-button">Меню</button>
+  <div class="header"><h1>Школьная база учебных работ TAG</h1></div>
+
+  <div class="search-container">
+    <div class="search-box">
+      <input type="text" id="searchQuery" class="search-input" placeholder="Введите название работы или автора..." />
+      <button id="searchButton" class="search-button">Поиск</button>
     </div>
 
-    <!-- Подключение JS ниже -->
-    <script src="main.js"></script>
+    <div class="search-options">
+      <div class="search-option active" data-type="all">Все работы</div>
+      <div class="search-option" data-type="research">Исследовательские</div>
+      <div class="search-option" data-type="practical">Практические</div>
+      <div class="search-option" data-type="8grade">8 класс</div>
+      <div class="search-option" data-type="11grade">11 класс</div>
+    </div>
+
+    <div class="grade-filter">
+      <span>Фильтр по баллам:</span>
+      <input type="number" id="minGrade" placeholder="От" min="0" max="100" />
+      <input type="number" id="maxGrade" placeholder="До" min="0" max="100" />
+    </div>
+  </div>
+
+  <div id="searchResults" class="search-results"></div>
+
+  <div id="workPage" class="work-page">
+    <h2 class="work-title" id="workTitle">Название работы</h2>
+    <div class="work-meta">
+      <span>Автор: <span id="workAuthor"></span></span>
+      <span>Тип: <span id="workType"></span></span>
+      <span>Класс: <span id="workGradeLevel"></span></span>
+      <span>Год: <span id="workYear"></span></span>
+      <span class="work-grade">Баллы: <span id="workGrade"></span></span>
+      <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
+    </div>
+    <div class="work-preview" id="workPreview">
+      <iframe id="workFrame" src=""></iframe>
+    </div>
+    <div class="work-content" id="workContent">Описание работы...</div>
+    <a href="#" class="work-download" id="workDownload" target="_blank">Open work</a>
+    <span class="view-toggle" id="viewToggle">Просмотреть онлайн</span>
+    <br />
+    <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
+  </div>
+
+  <div class="footer">© 2025 Tartu Annelinna Gumnaasium</div>
+
+  <!-- Подключение скрипта отдельно -->
+  <script src="script.js"></script>
 </body>
 </html>
