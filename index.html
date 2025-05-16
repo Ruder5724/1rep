@@ -1,364 +1,648 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Школьная база работ TAG - Поиск</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .header {
-      background-color: #2c3e50;
-      color: white;
-      width: 100%;
-      padding: 20px 0;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .top-left-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 25px;
-      font-size: 16px;
-      cursor: pointer;
-      z-index: 1000;
-      transition: background-color 0.3s;
-    }
-
-    .top-left-button:hover {
-      background-color: #2980b9;
-    }
-
-    .search-container {
-      margin-top: 50px;
-      width: 80%;
-      max-width: 800px;
-      text-align: center;
-    }
-
-    .search-box {
-      position: relative;
-      width: 100%;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 15px 20px;
-      font-size: 18px;
-      border: 2px solid #ddd;
-      border-radius: 30px;
-      outline: none;
-      transition: all 0.3s;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .search-input:focus {
-      border-color: #3498db;
-      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-    }
-
-    .search-button {
-      position: absolute;
-      right: 5px;
-      top: 5px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .search-button:hover {
-      background-color: #2980b9;
-    }
-
-    .search-options {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .search-option {
-      background-color: white;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      padding: 8px 15px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .search-option:hover,
-    .search-option.active {
-      background-color: #3498db;
-      color: white;
-      border-color: #3498db;
-    }
-
-    .grade-filter {
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .grade-filter input {
-      width: 60px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .search-results,
-    .work-page {
-      width: 80%;
-      max-width: 800px;
-      margin: 30px auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      display: none;
-    }
-
-    .result-item {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-
-    .result-title {
-      color: #3498db;
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
-
-    .result-meta {
-      font-size: 14px;
-      color: #777;
-      margin-bottom: 8px;
-    }
-
-    .result-snippet {
-      font-size: 15px;
-      color: #333;
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 30px;
-      color: #777;
-    }
-
-    .work-title {
-      color: #2c3e50;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .work-meta {
-      font-size: 16px;
-      color: #7f8c8d;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 15px;
-    }
-
-    .work-meta span {
-      display: inline-block;
-      margin-right: 15px;
-    }
-
-    .work-grade {
-      color: #27ae60;
-      font-weight: bold;
-    }
-
-    .work-supervisor {
-      font-style: italic;
-    }
-
-    .work-content {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-
-    .work-download {
-      display: inline-block;
-      background-color: #3498db;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: background-color 0.3s;
-    }
-
-    .work-download:hover {
-      background-color: #2980b9;
-    }
-
-    .view-toggle {
-      display: inline-block;
-      margin-left: 10px;
-      color: #3498db;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .view-toggle:hover {
-      text-decoration: underline;
-    }
-
-    .work-preview {
-      width: 100%;
-      height: 600px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .work-preview iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .back-to-search {
-      display: inline-block;
-      margin-top: 20px;
-      color: #3498db;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .back-to-search:hover {
-      text-decoration: underline;
-    }
-
-    .footer {
-      margin-top: auto;
-      width: 100%;
-      background-color: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .search-container {
-        width: 95%;
-      }
-
-      .search-input {
-        font-size: 16px;
-        padding: 12px 15px;
-      }
-
-      .search-button {
-        padding: 8px 15px;
-        font-size: 14px;
-      }
-
-      .work-meta span {
-        display: block;
-        margin-right: 0;
-        margin-bottom: 5px;
-      }
-
-      .work-preview {
-        height: 400px;
-      }
-
-      .grade-filter {
-        flex-direction: column;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьная база работ TAG - Поиск</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .search-container {
+            margin-top: 50px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .search-options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .search-option {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-option:hover, .search-option.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .search-results {
+            width: 80%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-title {
+            color: #3498db;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .result-meta {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+        
+        .result-snippet {
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+        
+        .work-page {
+            width: 80%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            display: none;
+        }
+        
+        .work-title {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .work-meta {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .work-meta span {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        
+        .work-grade {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .work-supervisor {
+            font-style: italic;
+        }
+        
+        .work-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .work-download {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .work-download:hover {
+            background-color: #2980b9;
+        }
+        
+        .back-to-search {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .back-to-search:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+        }
+        
+        .work-preview {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .work-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .view-toggle {
+            display: inline-block;
+            margin-left: 10px;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .view-toggle:hover {
+            text-decoration: underline;
+        }
+        
+        .grade-filter {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .grade-filter input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .search-container {
+                width: 95%;
+            }
+            
+            .search-input {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+            
+            .search-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .work-meta span {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .work-preview {
+                height: 400px;
+            }
+            
+            .grade-filter {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <button class="top-left-button">Меню</button>
-  <div class="header"><h1>Школьная база учебных работ TAG</h1></div>
-
-  <div class="search-container">
-    <div class="search-box">
-      <input type="text" id="searchQuery" class="search-input" placeholder="Введите название работы или автора..." />
-      <button id="searchButton" class="search-button">Поиск</button>
+    <div class="header">
+        <h1>Школьная база учебных работ TAG</h1>
+    </div>
+    
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchQuery" class="search-input" placeholder="Введите название работы или автора...">
+            <button id="searchButton" class="search-button">Поиск</button>
+        </div>
+        
+        <div class="search-options">
+            <div class="search-option active" data-type="all">Все работы</div>
+            <div class="search-option" data-type="research">Исследовательские</div>
+            <div class="search-option" data-type="practical">Практические</div>
+            <div class="search-option" data-type="8grade">8 класс</div>
+            <div class="search-option" data-type="11grade">11 класс</div>
+        </div>
+        
+        <div class="grade-filter">
+            <span>Фильтр по баллам:</span>
+            <input type="number" id="minGrade" placeholder="От" min="0" max="100">
+            <input type="number" id="maxGrade" placeholder="До" min="0" max="100">
+        </div>
+    </div>
+    
+    <div id="searchResults" class="search-results" style="display: none;">
+        <!-- Здесь будут появляться результаты поиска -->
+    </div>
+    
+    <div id="workPage" class="work-page">
+        <h2 class="work-title" id="workTitle">Название работы</h2>
+        <div class="work-meta">
+            <span>Автор: <span id="workAuthor"></span></span>
+            <span>Тип: <span id="workType"></span></span>
+            <span>Класс: <span id="workGradeLevel"></span></span>
+            <span>Год: <span id="workYear"></span></span>
+            <span class="work-grade">Баллы: <span id="workGrade"></span></span>
+            <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
+        </div>
+        
+        <div class="work-preview" id="workPreview" style="display: none;">
+            <iframe id="workFrame" src="" allowfullscreen></iframe>
+        </div>
+        
+        <div class="work-content" id="workContent">
+            Описание работы...
+        </div>
+        <a href="#" class="work-download" id="workDownload" target="_blank">Open work</a>
+        <span class="view-toggle" id="viewToggle">Просмотреть онлайн</span>
+        <br>
+        <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
+    </div>
+    
+    <div class="footer">
+        © 2025 Tartu Annelinna Gumnaasium
     </div>
 
-    <div class="search-options">
-      <div class="search-option active" data-type="all">Все работы</div>
-      <div class="search-option" data-type="research">Исследовательские</div>
-      <div class="search-option" data-type="practical">Практические</div>
-      <div class="search-option" data-type="8grade">8 класс</div>
-      <div class="search-option" data-type="11grade">11 класс</div>
-    </div>
+    <script>
+        // Обновленные данные работ
+        const worksDatabase = [
+            {
+                id: 1,
+                title: "ПРАВИЛА СОРТИРОВКИ ОТХОДОВ В ЭСТОНИИ НА УРОКАХ ДЛЯ ТРЕТЬИХ КЛАССОВ ТАГ",
+                author: "Antoskin Mihhail, Daniel Kozorev",
+                type: "research",
+                gradeLevel: "11",
+                year: 2025,
+                grade: 96,
+                supervisor: "Sergei Maltsenko",
+                content: "Исследовательская работа по экологическому воспитанию младших школьников. Разработана методика преподавания основ сортировки отходов для учащихся третьих классов.",
+                fileUrl: "https://drive.google.com/file/d/1AtdCvKf1tK10Xa3wkfiU6dORCgLOU45A/view?usp=sharing"
+            },
+            {
+                id: 2,
+                title: "ПРИЧИНЫ НЕКАЧЕСТВЕННОГО СНА У ПОДРОСТКОВ",
+                author: "Stanislav Ariskin, Rakitin Egor",
+                type: "practical",
+                gradeLevel: "11",
+                year: 2025,
+                grade: 84,
+                supervisor: "Igor Bitov",
+                content: "Практическая работа по изучению факторов, влияющих на качество сна подростков. Проведено анкетирование и анализ результатов.",
+                fileUrl: "https://docs.google.com/document/d/1UUA07tGCRFUNvm5Z1_DiTYdJehB9SkIc/edit?usp=sharing&ouid=108902080818734264869&rtpof=true&sd=true"
+            },
+            {
+                id: 3,
+                title: "TAGI GÜMNASISTIDE TEADMISED MIKROPLASTIST NING SELLE MÕJUST KESKKONNALE JA TERVISELE",
+                author: "Ruslan Derjabin, Daniil Fraiman",
+                type: "research",
+                gradeLevel: "11",
+                year: 2025,
+                grade: 80,
+                supervisor: "Kalev Uiga",
+                content: "Целью исследования было изучить влияние микропластика на окружающую среду и здоровье человека, и оценить осведомленность гимназистов Тартуской Аннелиннаской гимназии по этой теме.",
+                fileUrl: "https://drive.google.com/file/d/1XQRwzwDvF8znOCewz-ipFWYS9rPt-hNV/view?usp=sharing"
+            },
+            {
+                id: 4,
+                title: "СОЗДАНИЕ ШКОЛЬНОГО САЙТА",
+                author: "Смирнов Д., Козлова М.",
+                type: "practical",
+                gradeLevel: "8",
+                year: 2024,
+                grade: 92,
+                supervisor: "Петров А.В.",
+                content: "Практическая работа по информатике. Разработан и реализован сайт для школьного самоуправления.",
+                fileUrl: "https://drive.google.com/file/d/1example2/view?usp=drive_link"
+            },
+            {
+                id: 5,
+                title: "ИССЛЕДОВАНИЕ ВЛИЯНИЯ МУЗЫКИ НА КОНЦЕНТРАЦИЮ",
+                author: "Соколова А., Волков П.",
+                type: "research",
+                gradeLevel: "8",
+                year: 2024,
+                grade: 78,
+                supervisor: "Иванова Т.К.",
+                content: "Исследование влияния различных музыкальных жанров на концентрацию внимания школьников.",
+                fileUrl: "https://drive.google.com/file/d/1example3/view?usp=drive_link"
+            }
+        ];
 
-    <div class="grade-filter">
-      <span>Фильтр по баллам:</span>
-      <input type="number" id="minGrade" placeholder="От" min="0" max="100" />
-      <input type="number" id="maxGrade" placeholder="До" min="0" max="100" />
-    </div>
-  </div>
+        // Элементы DOM
+        const searchInput = document.getElementById('searchQuery');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const searchOptions = document.querySelectorAll('.search-option');
+        const minGradeInput = document.getElementById('minGrade');
+        const maxGradeInput = document.getElementById('maxGrade');
+        const workPage = document.getElementById('workPage');
+        const workTitle = document.getElementById('workTitle');
+        const workAuthor = document.getElementById('workAuthor');
+        const workType = document.getElementById('workType');
+        const workGradeLevel = document.getElementById('workGradeLevel');
+        const workYear = document.getElementById('workYear');
+        const workGrade = document.getElementById('workGrade');
+        const workSupervisor = document.getElementById('workSupervisor');
+        const workContent = document.getElementById('workContent');
+        const workDownload = document.getElementById('workDownload');
+        const backToSearch = document.getElementById('backToSearch');
+        const workPreview = document.getElementById('workPreview');
+        const workFrame = document.getElementById('workFrame');
+        const viewToggle = document.getElementById('viewToggle');
 
-  <div id="searchResults" class="search-results"></div>
+        // Текущий выбранный тип
+        let currentType = 'all';
+        let searchTimeout = null;
 
-  <div id="workPage" class="work-page">
-    <h2 class="work-title" id="workTitle">Название работы</h2>
-    <div class="work-meta">
-      <span>Автор: <span id="workAuthor"></span></span>
-      <span>Тип: <span id="workType"></span></span>
-      <span>Класс: <span id="workGradeLevel"></span></span>
-      <span>Год: <span id="workYear"></span></span>
-      <span class="work-grade">Баллы: <span id="workGrade"></span></span>
-      <span class="work-supervisor">Руководитель: <span id="workSupervisor"></span></span>
-    </div>
-    <div class="work-preview" id="workPreview">
-      <iframe id="workFrame" src=""></iframe>
-    </div>
-    <div class="work-content" id="workContent">Описание работы...</div>
-    <a href="#" class="work-download" id="workDownload" target="_blank">Open work</a>
-    <span class="view-toggle" id="viewToggle">Просмотреть онлайн</span>
-    <br />
-    <a href="#" class="back-to-search" id="backToSearch">← Вернуться к поиску</a>
-  </div>
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка открытия страницы работы из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const workId = urlParams.get('workId');
+            
+            if (workId) {
+                showWorkPage(parseInt(workId));
+            }
+            
+            // Настройка обработчиков событий
+            setupEventListeners();
+        });
 
-  <div class="footer">© 2025 Tartu Annelinna Gumnaasium</div>
+        function setupEventListeners() {
+            // Поиск при вводе текста (с задержкой)
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
+            });
+            
+            // Поиск при нажатии кнопки
+            searchButton.addEventListener('click', performSearch);
+            
+            // Поиск при нажатии Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+            
+            // Возврат к поиску
+            backToSearch.addEventListener('click', function(e) {
+                e.preventDefault();
+                workPage.style.display = 'none';
+                searchResults.style.display = 'block';
+            });
+            
+            // Переключение предпросмотра
+            viewToggle.addEventListener('click', togglePreview);
+            
+            // Фильтры по типу работы
+            searchOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    searchOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.dataset.type;
+                    performSearch();
+                });
+            });
+            
+            // Фильтры по баллам
+            minGradeInput.addEventListener('input', performSearch);
+            maxGradeInput.addEventListener('input', performSearch);
+        }
 
-  <!-- Подключение скрипта отдельно -->
-  <script src="script.js"></script>
+        // Функция поиска
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            const minGrade = parseInt(minGradeInput.value) || 0;
+            const maxGrade = parseInt(maxGradeInput.value) || 100;
+            
+            // Фильтрация работ
+            let results = worksDatabase.filter(work => {
+                // Поиск только по названию и авторам
+                const matchesQuery = query === '' || 
+                                    work.title.toLowerCase().includes(query) || 
+                                    work.author.toLowerCase().includes(query);
+                
+                // Фильтр по типу работы и классу
+                const matchesType = 
+                    currentType === 'all' || 
+                    (currentType === 'research' && work.type === 'research') ||
+                    (currentType === 'practical' && work.type === 'practical') ||
+                    (currentType === '8grade' && work.gradeLevel === '8') ||
+                    (currentType === '11grade' && work.gradeLevel === '11');
+                
+                // Фильтр по баллам
+                const matchesGrade = work.grade >= minGrade && work.grade <= maxGrade;
+                
+                return matchesQuery && matchesType && matchesGrade;
+            });
+
+            displayResults(results);
+        }
+
+        // Отображение результатов
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.style.display = 'block';
+            workPage.style.display = 'none';
+            workPreview.style.display = 'none';
+            viewToggle.textContent = 'Просмотреть онлайн';
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div class="no-results">Работ по вашему запросу не найдено</div>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(work => {
+                html += `
+                    <div class="result-item" data-id="${work.id}">
+                        <div class="result-title">${work.title}</div>
+                        <div class="result-meta">${getTypeName(work.type)} | Класс: ${work.gradeLevel} | Автор: ${work.author} | Год: ${work.year} | Баллы: ${work.grade}/100 | Руководитель: ${work.supervisor}</div>
+                        <div class="result-snippet">${getSnippet(work.content)}</div>
+                    </div>
+                `;
+            });
+
+            resultsContainer.innerHTML = html;
+            
+            // Добавляем обработчики для клика на результат
+            document.querySelectorAll('.result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const workId = parseInt(this.dataset.id);
+                    showWorkPage(workId);
+                });
+            });
+        }
+
+        // Показать страницу работы
+        function showWorkPage(workId) {
+            const work = worksDatabase.find(w => w.id === workId);
+            if (!work) return;
+            
+            workTitle.textContent = work.title;
+            workAuthor.textContent = work.author;
+            workType.textContent = getTypeName(work.type);
+            workGradeLevel.textContent = work.gradeLevel;
+            workYear.textContent = work.year;
+            workGrade.textContent = work.grade + '/100';
+            workSupervisor.textContent = work.supervisor;
+            workContent.textContent = work.content;
+            workDownload.href = work.fileUrl;
+            
+            // Настройка предпросмотра
+            const fileId = extractFileId(work.fileUrl);
+            if (fileId) {
+                const previewUrl = `https://docs.google.com/viewer?embedded=true&url=https://drive.google.com/uc?id=${fileId}`;
+                workFrame.src = previewUrl;
+            }
+            
+            searchResults.style.display = 'none';
+            workPage.style.display = 'block';
+            workPreview.style.display = 'none';
+            viewToggle.textContent = 'Просмотреть онлайн';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Обновляем URL без перезагрузки страницы
+            history.pushState(null, '', `?workId=${workId}`);
+        }
+
+        // Переключение предпросмотра
+        function togglePreview() {
+            if (workPreview.style.display === 'none') {
+                workPreview.style.display = 'block';
+                this.textContent = 'Скрыть просмотр';
+            } else {
+                workPreview.style.display = 'none';
+                this.textContent = 'Просмотреть онлайн';
+            }
+        }
+
+        // Извлечение ID файла из ссылки Google Drive
+        function extractFileId(url) {
+            if (!url) return null;
+            
+            // Для обычных ссылок на файлы
+            const fileMatch = url.match(/\/file\/d\/([^\/]+)/);
+            if (fileMatch) return fileMatch[1];
+            
+            // Для ссылок на документы Google
+            const docMatch = url.match(/\/document\/d\/([^\/]+)/);
+            if (docMatch) return docMatch[1];
+            
+            return null;
+        }
+
+        // Вспомогательные функции
+        function getTypeName(type) {
+            const types = {
+                'research': 'Исследовательская работа',
+                'practical': 'Практическая работа'
+            };
+            return types[type] || 'Работа';
+        }
+
+        function getSnippet(text, length = 150) {
+            if (!text) return 'Описание отсутствует';
+            if (text.length <= length) return text;
+            return text.substring(0, length) + '...';
+        }
+    </script>
 </body>
 </html>
